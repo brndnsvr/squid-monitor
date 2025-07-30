@@ -1,6 +1,6 @@
 [Unit]
 Description=Squid Service Monitor Timer
-Documentation=https://github.com/yourusername/squid-monitor
+Documentation=https://github.com/brndnsvr/squid-monitor
 Requires=squid-monitor.service
 
 [Timer]

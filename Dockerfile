@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-LABEL maintainer="maintainer@example.com"
+LABEL maintainer="Brandon Seaver"
 LABEL description="Squid Service Monitor - Production-ready monitoring for Squid proxy"
 LABEL version="1.0.0"
 

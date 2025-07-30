@@ -1,6 +1,6 @@
 [Unit]
 Description=Squid Service Monitor
-Documentation=https://github.com/yourusername/squid-monitor
+Documentation=https://github.com/brndnsvr/squid-monitor
 After=network-online.target
 Wants=network-online.target
 

@@ -26,58 +26,41 @@ A production-ready monitoring solution for Squid proxy service with email alerti
 
 ### Installation
 
-#### Option 1: Native Installation
+#### Option 1: Automated Setup (Recommended)
 
-1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/squid-monitor.git
+git clone https://github.com/brndnsvr/squid-monitor.git
 cd squid-monitor
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Create necessary directories:
-```bash
-sudo mkdir -p /var/lib/squid-monitor /var/log/squid-monitor /etc/squid-monitor
-sudo useradd -r -s /bin/false squid-monitor
-sudo chown squid-monitor:squid-monitor /var/lib/squid-monitor /var/log/squid-monitor
-```
-
-4. Copy configuration:
-```bash
-sudo cp config/config.example.yaml /etc/squid-monitor/config.yaml
-sudo cp systemd/squid-monitor.env.example /etc/squid-monitor/squid-monitor.env
-# Edit the files with your settings
-```
-
-5. Install systemd units:
-```bash
-sudo cp systemd/squid-monitor.{service,timer} /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable squid-monitor.timer
-sudo systemctl start squid-monitor.timer
+sudo ./setup.sh  # Interactive setup with configuration prompts
 ```
 
 #### Option 2: Docker Deployment
 
-1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/squid-monitor.git
+git clone https://github.com/brndnsvr/squid-monitor.git
 cd squid-monitor
-```
-
-2. Build the image:
-```bash
-docker build -t squid-monitor:latest .
-```
-
-3. Run with docker-compose:
-```bash
-# Edit docker-compose.yml with your settings
+./configure.sh  # Interactive configuration
 docker-compose up -d
+```
+
+#### Option 3: Manual Installation
+
+See the [setup.sh](setup.sh) script for manual installation steps.
+
+## Quick Usage
+
+```bash
+# Test configuration (dry run)
+python3 src/squid_monitor.py --dry-run --once
+
+# Run monitoring continuously
+python3 src/squid_monitor.py
+
+# Check service status
+systemctl status squid-monitor.timer
+
+# View logs
+journalctl -u squid-monitor -f
 ```
 
 ## Configuration
@@ -127,40 +110,28 @@ features:
   webhook_url: "https://monitoring.example.com/webhook"
 ```
 
-## Usage
-
-### Command Line Options
+## Command Line Options
 
 ```bash
-# Run with default configuration
-python3 squid_monitor.py
+squid_monitor.py [-h] [-c CONFIG] [--dry-run] [--once] [--debug] [--version]
 
-# Use custom config file
-python3 squid_monitor.py -c /path/to/config.yaml
-
-# Run once and exit
-python3 squid_monitor.py --once
-
-# Dry run mode (no alerts sent)
-python3 squid_monitor.py --dry-run
-
-# Enable debug logging
-python3 squid_monitor.py --debug
-
-# Show version
-python3 squid_monitor.py --version
+Options:
+  -h, --help            Show help message and exit
+  -c CONFIG, --config CONFIG
+                        Configuration file path
+  --dry-run             Test mode - no alerts sent
+  --once                Run once and exit
+  --debug               Enable debug logging
+  --version             Show version information
 ```
 
-### Testing
+## Testing
 
-Run the test suite:
 ```bash
-cd squid-monitor
-python -m pytest tests/ -v
-```
+# Run unit tests
+./run_tests.sh
 
-Run a single test check:
-```bash
+# Manual test with dry run
 python3 src/squid_monitor.py --dry-run --once
 ```
 
@@ -262,9 +233,9 @@ squid-monitor/
 
 ## License
 
-[Your License Here]
+MIT License - see [LICENSE](LICENSE) file for details
 
 ## Support
 
-- Issues: https://github.com/yourusername/squid-monitor/issues
-- Documentation: https://github.com/yourusername/squid-monitor/wiki
+- Issues: https://github.com/brndnsvr/squid-monitor/issues
+- Documentation: https://github.com/brndnsvr/squid-monitor/wiki
