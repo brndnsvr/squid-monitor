@@ -20,15 +20,15 @@ services:
       - ./config/config.yaml:/opt/squid-monitor/config/config.yaml:ro
       # Persist state
       - squid-monitor-state:/var/lib/squid-monitor
-      # Persist logs
-      - squid-monitor-logs:/var/log/squid-monitor
-      # Mount systemd socket for service checks (if running on host)
-      # - /run/systemd:/run/systemd:ro
-      # - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      # Persist logs - bind mount for easier access
+      - ./logs:/var/log/squid-monitor
+      # Mount systemd socket for service checks (REQUIRED for monitoring host)
+      - /run/systemd:/run/systemd:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
       
-    # Required if monitoring services on the host
-    # pid: host
-    # privileged: true
+    # Required for monitoring services on the host
+    pid: host
+    privileged: true  # Needed for systemctl access
     
     # Resource limits
     deploy:

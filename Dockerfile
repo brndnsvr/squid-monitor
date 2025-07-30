@@ -20,8 +20,9 @@ RUN mkdir -p /opt/squid-monitor/src \
              /var/log/squid-monitor \
              /etc/squid-monitor
 
-# Set ownership
-RUN chown -R squid-monitor:squid-monitor /var/lib/squid-monitor /var/log/squid-monitor
+# Set ownership and permissions
+RUN chown -R squid-monitor:squid-monitor /var/lib/squid-monitor /var/log/squid-monitor && \
+    chmod -R 755 /var/lib/squid-monitor /var/log/squid-monitor
 
 # Copy application files
 COPY --chown=squid-monitor:squid-monitor src/squid_monitor.py /opt/squid-monitor/src/
@@ -32,8 +33,9 @@ COPY --chown=squid-monitor:squid-monitor requirements.txt /opt/squid-monitor/
 WORKDIR /opt/squid-monitor
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Switch to non-root user
-USER squid-monitor
+# Note: Running as root for systemctl access
+# In production, consider using sudo or capabilities instead
+# USER squid-monitor
 
 # Set environment variables
 ENV PYTHONPATH=/opt/squid-monitor/src
