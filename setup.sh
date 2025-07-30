@@ -72,7 +72,42 @@ fi
 
 # Install Python dependencies
 echo -e "\n${YELLOW}Installing Python dependencies...${NC}"
-pip3 install -r requirements.txt
+
+# Check if we need to use system packages or venv
+if python3 -m pip install --help 2>&1 | grep -q "externally-managed-environment"; then
+    echo -e "${YELLOW}Detected externally managed Python environment${NC}"
+    
+    # Try to install system packages first
+    echo "Attempting to install system packages..."
+    if command -v apt-get &> /dev/null; then
+        apt-get update
+        apt-get install -y python3-yaml python3-requests || {
+            echo -e "${YELLOW}System packages not sufficient, creating virtual environment...${NC}"
+            VENV_NEEDED=true
+        }
+    else
+        VENV_NEEDED=true
+    fi
+    
+    if [[ "$VENV_NEEDED" == "true" ]]; then
+        # Create a virtual environment
+        python3 -m venv "$INSTALL_DIR/venv"
+        source "$INSTALL_DIR/venv/bin/activate"
+        pip install -r requirements.txt
+        deactivate
+        
+        # Update the Python path in service file
+        PYTHON_BIN="$INSTALL_DIR/venv/bin/python3"
+        echo -e "${YELLOW}Using virtual environment at $INSTALL_DIR/venv${NC}"
+    else
+        PYTHON_BIN="/usr/bin/python3"
+    fi
+else
+    # Traditional pip install
+    pip3 install -r requirements.txt
+    PYTHON_BIN="/usr/bin/python3"
+fi
+
 echo -e "${GREEN}✓ Dependencies installed${NC}"
 
 # Set permissions
@@ -90,6 +125,7 @@ cp systemd/squid-monitor.timer /etc/systemd/system/
 
 # Update paths in service file
 sed -i "s|/opt/squid-monitor|$INSTALL_DIR|g" /etc/systemd/system/squid-monitor.service
+sed -i "s|/usr/bin/python3|$PYTHON_BIN|g" /etc/systemd/system/squid-monitor.service
 
 systemctl daemon-reload
 echo -e "${GREEN}✓ Systemd units installed${NC}"
@@ -160,7 +196,7 @@ echo -e "${GREEN}✓ Configuration updated${NC}"
 
 # Test configuration
 echo -e "\n${YELLOW}Testing configuration...${NC}"
-if $INSTALL_DIR/src/squid_monitor.py --dry-run --once; then
+if $PYTHON_BIN $INSTALL_DIR/src/squid_monitor.py --dry-run --once; then
     echo -e "${GREEN}✓ Configuration test passed${NC}"
 else
     echo -e "${RED}✗ Configuration test failed. Please check the settings.${NC}"
