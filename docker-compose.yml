@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  squid-monitor:
+    build: .
+    image: squid-monitor:latest
+    container_name: squid-monitor
+    restart: unless-stopped
+    
+    environment:
+      - SMTP_SERVER=smtp.example.com
+      - SMTP_PORT=25
+      - SMTP_FROM=squid-noreply@example.com
+      - SMTP_TO=admin@example.com
+      - SERVICE_NAME=squid
+      - CHECK_INTERVAL=300
+      - LOG_LEVEL=INFO
+      - DRY_RUN=false
+      
+    volumes:
+      # Mount config file (optional - environment variables take precedence)
+      - ./config/config.yaml:/opt/squid-monitor/config/config.yaml:ro
+      # Persist state
+      - squid-monitor-state:/var/lib/squid-monitor
+      # Persist logs
+      - squid-monitor-logs:/var/log/squid-monitor
+      # Mount systemd socket for service checks (if running on host)
+      # - /run/systemd:/run/systemd:ro
+      # - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      
+    # Required if monitoring services on the host
+    # pid: host
+    # privileged: true
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+          
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  squid-monitor-state:
+  squid-monitor-logs:

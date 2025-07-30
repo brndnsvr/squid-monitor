@@ -1,0 +1,46 @@
+[Unit]
+Description=Squid Service Monitor
+Documentation=https://github.com/yourusername/squid-monitor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=squid-monitor
+Group=squid-monitor
+WorkingDirectory=/opt/squid-monitor
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/squid-monitor /var/log/squid-monitor
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RemoveIPC=true
+
+# Resource limits
+CPUQuota=20%
+MemoryLimit=256M
+
+# Environment
+Environment="PYTHONPATH=/opt/squid-monitor/src"
+EnvironmentFile=-/etc/squid-monitor/squid-monitor.env
+
+# Execute monitoring script
+ExecStart=/usr/bin/python3 /opt/squid-monitor/src/squid_monitor.py --once
+
+# Restart policy
+Restart=on-failure
+RestartSec=30s
+
+[Install]
+WantedBy=multi-user.target

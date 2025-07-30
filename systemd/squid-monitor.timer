@@ -1,0 +1,18 @@
+[Unit]
+Description=Squid Service Monitor Timer
+Documentation=https://github.com/yourusername/squid-monitor
+Requires=squid-monitor.service
+
+[Timer]
+# Run every 5 minutes
+OnBootSec=2min
+OnUnitActiveSec=5min
+
+# Randomize execution time by up to 30 seconds to prevent thundering herd
+RandomizedDelaySec=30
+
+# Make timer persistent to catch up on missed runs
+Persistent=true
+
+[Install]
+WantedBy=timers.target

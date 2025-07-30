@@ -1,0 +1,41 @@
+# Squid Monitor Configuration
+# Copy this file to config.yaml and adjust settings as needed
+
+smtp:
+  server: "smtp.example.com"
+  port: 25
+  use_tls: false
+  # Optional authentication
+  # username: ""
+  # password: ""
+  from_address: "squid-noreply@example.com"
+  to_addresses:
+    - "admin@example.com"
+    # Add multiple recipients as needed
+    # - "admin2@example.com"
+  timeout: 30
+
+monitoring:
+  service_name: "squid"
+  check_interval: 300  # 5 minutes
+  state_file: "/var/lib/squid-monitor/state.json"
+  log_file: "/var/log/squid-monitor/monitor.log"
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  alert_cooldown: 3600  # 1 hour - prevent alert spam
+  retry_attempts: 3
+  retry_delay: 5  # seconds
+
+features:
+  dry_run: false
+  enable_syslog: true
+  enable_webhooks: false
+  # webhook_url: "https://your-monitoring-system.com/webhook"
+
+# Plugin configuration (for future extensibility)
+plugins:
+  enabled: []
+  # Example:
+  # - name: "prometheus_exporter"
+  #   port: 9100
+  # - name: "nagios_check"
+  #   command: "/usr/lib/nagios/plugins/check_squid"
