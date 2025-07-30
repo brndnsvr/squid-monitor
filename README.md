@@ -183,31 +183,30 @@ features:
 
 ## Troubleshooting
 
-### Common Issues
+See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for detailed solutions to common issues including:
 
-1. **Permission Denied**
-   - Ensure squid-monitor user has required permissions
-   - Check systemd security restrictions
+- Python "externally-managed-environment" errors
+- Permission denied errors
+- Docker/container issues
+- SMTP configuration problems
+- Platform-specific issues (macOS, etc.)
 
-2. **Email Not Sending**
-   - Verify SMTP server connectivity: `telnet smtp-server 25`
-   - Check firewall rules
-   - Enable debug logging to see SMTP conversation
+### Quick Fixes
 
-3. **Service Check Fails**
-   - Verify systemctl access: `sudo -u squid-monitor systemctl is-active squid`
-   - Check if running in container (may need host PID namespace)
-
-4. **State File Issues**
-   - Ensure write permissions on state directory
-   - Check disk space
-
-### Debug Mode
-
-Enable detailed logging:
+**Python Installation Issues:**
 ```bash
-export LOG_LEVEL=DEBUG
-python3 squid_monitor.py --debug
+# Option 1: Use system packages
+sudo apt install -y python3-yaml python3-requests
+
+# Option 2: Use virtual environment
+sudo python3 -m venv /opt/squid-monitor/venv
+sudo /opt/squid-monitor/venv/bin/pip install -r requirements.txt
+```
+
+**Testing Without Installation:**
+```bash
+# Local test (no sudo required)
+./test-local.sh
 ```
 
 ## Development
