@@ -7,15 +7,13 @@ services:
     container_name: squid-monitor
     restart: unless-stopped
     
+    # Environment variables from .env file
+    env_file:
+      - .env
+    
+    # Override specific variables if needed
     environment:
-      - SMTP_SERVER=smtp.example.com
-      - SMTP_PORT=25
-      - SMTP_FROM=squid-noreply@example.com
-      - SMTP_TO=admin@example.com
-      - SERVICE_NAME=squid
-      - CHECK_INTERVAL=300
-      - LOG_LEVEL=INFO
-      - DRY_RUN=false
+      - ENABLE_SYSLOG=false  # Must be false in Docker
       
     volumes:
       # Mount config file (optional - environment variables take precedence)

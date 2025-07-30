@@ -39,9 +39,23 @@ sudo ./setup.sh  # Interactive setup with configuration prompts
 ```bash
 git clone https://github.com/brndnsvr/squid-monitor.git
 cd squid-monitor
-./configure.sh  # Interactive configuration
+
+# Configure your settings
+cp .env.example .env
+# Edit .env with your SMTP server details!
+nano .env  # or use your preferred editor
+
+# Start the monitor
 docker-compose up -d
+
+# View logs
+docker logs -f squid-monitor
 ```
+
+**Important for Docker:**
+- You MUST configure your SMTP settings in the `.env` file
+- Syslog is disabled in Docker (uses file logging only)
+- To monitor host services, uncomment the systemd mounts in docker-compose.yml
 
 #### Option 3: Manual Installation
 
