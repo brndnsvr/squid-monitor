@@ -74,7 +74,7 @@ fi
 echo -e "\n${YELLOW}Installing Python dependencies...${NC}"
 
 # Check if we need to use system packages or venv
-if python3 -m pip install --help 2>&1 | grep -q "externally-managed-environment"; then
+if python3 -m pip install --dry-run pyyaml 2>&1 | grep -q "externally-managed-environment"; then
     echo -e "${YELLOW}Detected externally managed Python environment${NC}"
     
     # Try to install system packages first
@@ -217,3 +217,4 @@ echo "   systemctl status squid-monitor.timer"
 echo "   journalctl -u squid-monitor -f"
 
 echo -e "\n${GREEN}Setup complete!${NC}"
+
